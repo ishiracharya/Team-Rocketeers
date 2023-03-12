@@ -1,6 +1,13 @@
 #include <kipr/wombat.h>
 
-//constants
+/*
++--------------------------------------+    +--\  /--\  --+--  +--\   /\   |     |       +--\  /--\  /---  |   /  +---  --+--  +---  +---  +--\  +---  |
+|   Rocketeers - 2023 Botball #0328    |    |__/  |  |    |    |__/  /__\  |     |       |__/  |  |  |     |__/   |__     |    |__   |__   |__/  |     |
+|          Competition Code            |    |  \  |  |    |    |  \  |  |  |     |       |  \  |  |  |     |  \   |       |    |     |     |  \  +--+  |
++--------------------------------------+    |__/  \__/    |    |__/  |  |  |___  |___    |  |  \__/  \___  |   \  +---    |    +---  +---  |  |  ___|  o
+*/
+
+// constants
 int LEFT_MOTOR_PORT = 0;
 int RIGHT_MOTOR_PORT = 1;
 
@@ -25,12 +32,12 @@ float TICKS_PER_DEGREE = 13.1;
 float TICKS_PER_INCH = 222.2;
 
 int LIFT_UP = 324;
-int LIFT_DOWN = 2047;
+int LIFT_DOWN = 2001;
 int LIFT_PORT = 0;
 
-int SORTER_LEFT = 0;
-int SORTER_RIGHT = 1458;
-int SORTER_MIDDLE = 694;
+int SORTER_LEFT = 391;
+int SORTER_RIGHT = 1652;
+int SORTER_MIDDLE = 1006;
 int SORTER_PORT = 1;
 
 void drive(float distance, int speed){
@@ -154,7 +161,7 @@ void open_claw(int target, int speed) {
     mav(CLAW_PORT, 0);
 }
 
-void calibrate(){
+void calibrate(){ // pronounced "CAH-lee-bra-TAY"
     move_servo(LIFT_PORT, LIFT_UP, 1000);
     move_servo(SORTER_PORT, SORTER_MIDDLE, 500);
     open_claw(0, 1000);
@@ -162,27 +169,56 @@ void calibrate(){
 
 int main()
 {
+    // get ready for scoring hella points
     enable_servos();
-    calibrate();
     
-    // scoring hella points
+    calibrate();
+    //return 0;
+    
+    // scoring hella points, act 1: "the claw close"
     drive(-2,1000);
-    turn_left(3,400);
+    turn_left(1, 500);
     move_servo(LIFT_PORT, LIFT_DOWN, 1000);
     drive(11, 1000);
     move_servo(SORTER_PORT, SORTER_RIGHT, 500);
-    turn_right(85, 1000);
+    turn_right(85, 500);
     move_servo(SORTER_PORT, SORTER_LEFT, 500);
-    line_follow(6, 1000, 1, LEFT_TOPHAT_PORT, LINE_FOLLOW_SENSITIVITY_LOW);
+    line_follow(5, 1000, 1, LEFT_TOPHAT_PORT, LINE_FOLLOW_SENSITIVITY_LOW);
     move_servo(SORTER_PORT, SORTER_RIGHT, 500);
-    line_follow(8, 1000, 1, LEFT_TOPHAT_PORT, LINE_FOLLOW_SENSITIVITY_LOW);
+    line_follow(9, 1000, 1, LEFT_TOPHAT_PORT, LINE_FOLLOW_SENSITIVITY_LOW);
     move_servo(SORTER_PORT, SORTER_LEFT, 500);    
     close_claw(CLAW_ATTACK, 1000);
-    turn_left(180, 1000);
-    line_follow_backwards(10, 1000, 0, BACK_TOPHAT_PORT, LINE_FOLLOW_SENSITIVITY_LOW);
+    turn_left(180, 500);
+    line_follow_backwards(15, 1000, 1, BACK_TOPHAT_PORT, LINE_FOLLOW_SENSITIVITY_LOW);
     close_claw(CLAW_CLOSED, 1000);
     
+    // scoring hella points, act 2: "the drive back"
+    line_follow(28, 1000, 0, RIGHT_TOPHAT_PORT, LINE_FOLLOW_SENSITIVITY_LOW);
+    move_servo(SORTER_PORT, SORTER_RIGHT, 500);
+	line_follow(8, 1000, 0, RIGHT_TOPHAT_PORT, LINE_FOLLOW_SENSITIVITY_LOW);
+    move_servo(SORTER_PORT, SORTER_LEFT, 500);
+    line_follow(8, 1000, 0, RIGHT_TOPHAT_PORT, LINE_FOLLOW_SENSITIVITY_LOW);
+    move_servo(SORTER_PORT, SORTER_RIGHT, 500);
+    line_follow(8, 1000, 0, RIGHT_TOPHAT_PORT, LINE_FOLLOW_SENSITIVITY_LOW);
+    move_servo(SORTER_PORT, SORTER_LEFT, 500); 
+	line_follow(9, 1000, 0, RIGHT_TOPHAT_PORT, LINE_FOLLOW_SENSITIVITY_LOW);
+    turn_left(180, 500);
+    move_servo(SORTER_PORT, SORTER_RIGHT, 500); 
+    move_servo(SORTER_PORT, SORTER_LEFT, 500); 
+    line_follow_backwards(12, 1000, 1, BACK_TOPHAT_PORT, LINE_FOLLOW_SENSITIVITY_LOW);
+    drive(1, 1000);
+    msleep(10000);
     
-   
     return 0;
 }
+
+/*
+   __
+  |  |
+  |  o
+  | /|\
+  | / 
+__|__     ROC_ETEERS
+A N L M U
+
+*/
