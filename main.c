@@ -16,9 +16,9 @@ int RIGHT_TOPHAT_PORT = 0;
 int BACK_TOPHAT_PORT = 2;
 
 int BLACK_VALUE = 3800;
-int WHITE_VALUE = 300;
+int WHITE_VALUE = 900;
 int SMALL_BLACK_VALUE = 4000;
-int SMALL_WHITE_VALUE = 3200;
+int SMALL_WHITE_VALUE = 3400;
 
 int CLAW_PORT = 2;
 int CLAW_OPEN = 0;
@@ -31,13 +31,13 @@ float LINE_FOLLOW_SENSITIVITY_HIGH = 0.5;
 float TICKS_PER_DEGREE = 13.1;
 float TICKS_PER_INCH = 222.2;
 
-int LIFT_UP = 324;
-int LIFT_DOWN = 2001;
+int LIFT_UP = 2047;
+int LIFT_DOWN = 888;
 int LIFT_PORT = 0;
 
-int SORTER_LEFT = 391;
-int SORTER_RIGHT = 1652;
-int SORTER_MIDDLE = 1006;
+int SORTER_LEFT = 344;
+int SORTER_RIGHT = 1681;
+int SORTER_MIDDLE = 980;
 int SORTER_PORT = 1;
 
 void drive(float distance, int speed){
@@ -152,7 +152,10 @@ void close_claw(int target, int speed) {
     }
     mav(CLAW_PORT, 0);
 }
-
+void thread_action() {
+    close_claw(CLAW_ATTACK, 1500);
+}
+    
 void open_claw(int target, int speed) {
     while (gmpc(CLAW_PORT) > target){
         mav(CLAW_PORT, -speed);
@@ -171,23 +174,39 @@ int main()
 {
     // get ready for scoring hella points
     enable_servos();
-    
     calibrate();
     //return 0;
     
+	thread tid;
+    tid = thread_create(thread_action);
+    /*turn_right(34, 500);
+    drive(-2,1000);
+	move_servo(LIFT_PORT, LIFT_DOWN, 1000);
+    drive(2,1000);
+    move_servo(SORTER_PORT, SORTER_RIGHT, 700);
+    turn_right(22, 500);
+	drive(6, 1000);
+    move_servo(SORTER_PORT, SORTER_LEFT, 700);*/
+   
+    
+    
     // scoring hella points, act 1: "the claw close"
     drive(-2,1000);
-    turn_left(1, 500);
+    turn_left(1, 300);
     move_servo(LIFT_PORT, LIFT_DOWN, 1000);
-    drive(11, 1000);
+    drive(13, 1000);
     move_servo(SORTER_PORT, SORTER_RIGHT, 500);
-    turn_right(85, 500);
+    turn_right(45, 500);
+    drive(-2,1000);
+    turn_right(40, 500);
     move_servo(SORTER_PORT, SORTER_LEFT, 500);
+    thread_start(tid);
     line_follow(5, 1000, 1, LEFT_TOPHAT_PORT, LINE_FOLLOW_SENSITIVITY_LOW);
     move_servo(SORTER_PORT, SORTER_RIGHT, 500);
-    line_follow(9, 1000, 1, LEFT_TOPHAT_PORT, LINE_FOLLOW_SENSITIVITY_LOW);
-    move_servo(SORTER_PORT, SORTER_LEFT, 500);    
-    close_claw(CLAW_ATTACK, 1000);
+    line_follow(8, 1000, 1, LEFT_TOPHAT_PORT, LINE_FOLLOW_SENSITIVITY_LOW);
+    move_servo(SORTER_PORT, SORTER_LEFT, 500);   
+    thread_wait(tid);
+    thread_destroy(tid);
     turn_left(180, 500);
     line_follow_backwards(15, 1000, 1, BACK_TOPHAT_PORT, LINE_FOLLOW_SENSITIVITY_LOW);
     close_claw(CLAW_CLOSED, 1000);
@@ -200,14 +219,27 @@ int main()
     line_follow(8, 1000, 0, RIGHT_TOPHAT_PORT, LINE_FOLLOW_SENSITIVITY_LOW);
     move_servo(SORTER_PORT, SORTER_RIGHT, 500);
     line_follow(8, 1000, 0, RIGHT_TOPHAT_PORT, LINE_FOLLOW_SENSITIVITY_LOW);
-    move_servo(SORTER_PORT, SORTER_LEFT, 500); 
-	line_follow(9, 1000, 0, RIGHT_TOPHAT_PORT, LINE_FOLLOW_SENSITIVITY_LOW);
-    turn_left(180, 500);
-    move_servo(SORTER_PORT, SORTER_RIGHT, 500); 
-    move_servo(SORTER_PORT, SORTER_LEFT, 500); 
-    line_follow_backwards(12, 1000, 1, BACK_TOPHAT_PORT, LINE_FOLLOW_SENSITIVITY_LOW);
+    move_servo(SORTER_PORT, SORTER_LEFT, 500);  
+    line_follow(8, 1000, 0, RIGHT_TOPHAT_PORT, LINE_FOLLOW_SENSITIVITY_LOW);
+    move_servo(SORTER_PORT, SORTER_RIGHT, 500);
+    turn_left(175, 500);
+    move_servo(SORTER_PORT, SORTER_RIGHT, 500);
+    msleep(500);
+    move_servo(SORTER_PORT, SORTER_LEFT, 500);
+    line_follow_backwards(13, 1000, 1, BACK_TOPHAT_PORT, LINE_FOLLOW_SENSITIVITY_LOW);
     drive(1, 1000);
+    
+    // intermission: please return to your seats in 10 seconds
     msleep(10000);
+    
+    // scoring hella points, act 3: "the finale"
+    drive(4, 1000);
+    turn_left(135, 500);
+    drive(-2,1000);
+    open_claw(CLAW_OPEN, 1000);
+    turn_left(90, 500);
+    
+    
     
     return 0;
 }
