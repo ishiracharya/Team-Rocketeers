@@ -195,8 +195,24 @@ int main()
     msleep(10000);
 	*/
     // scoring hella points, act 3: "the finale"v2
-    turn_right(135,500);
-    drive(-16,1000);
+    drive(6, 1000);
+    turn_left(100,500);
+    move_servo(SORTER_PORT, SORTER_RIGHT, 500);
+    move_servo(SORTER_PORT, SORTER_LEFT, 500);
+    drive(-3, 1000);
+    move_servo(CLAW_PORT, CLAW_OUT, 500);
+    drive(3,1000);
+    turn_left(125,500);
+    move_servo(SORTER_PORT, SORTER_RIGHT, 500);
+    drive(5,1000);
+    drive(-10,1000);
+    turn_left(45,500);
+    turn_left(5,500);
+    turn_right(5,500);
+    turn_left(5,500);
+    turn_right(5,500);
+    
+    
     
     // scoring hella points, act 3: "the finale"v1
     /*
